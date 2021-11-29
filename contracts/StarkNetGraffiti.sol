@@ -18,30 +18,28 @@ contract StarkNetGraffiti {
     address public owner;
 
 
-    event messageReceivedFromStarkNet(address sender, string stringMessage);
-    event messageSentToStarkNet(address sender, string stringMessage);
+    event messageReceivedFromStarkNet(string stringMessage);
+    event messageSentToStarkNet(string stringMessage);
 
-    constructor(IStarknetCore starknetCore_) public 
+    constructor() public 
     {   
-      starknetCore = starknetCore_;
       owner = msg.sender;
     }
 
-    function graffFromStarknetOnMainnet(address sender, bytes32 messageToGraff) 
+    function graffFromStarknetOnMainnet(bytes32 messageToGraff) 
     public 
     {
         // Construct the withdrawal message's payload.
-        uint256[] memory payload = new uint256[](2);
-        payload[0] = uint256(sender);
-        payload[1] = uint256(messageToGraff);
+        uint256[] memory payload = new uint256[](1);
+        payload[0] = uint256(messageToGraff);
 
         // Consume the message from the StarkNet core contract.
         // This will revert the (Ethereum) transaction if the message does not exist.
         starknetCore.consumeMessageFromL2(l2MessengerContractAddress, payload);
-        emit messageReceivedFromStarkNet(sender, bytes32ToString(messageToGraff));
+        emit messageReceivedFromStarkNet(bytes32ToString(messageToGraff));
     }
 
-    function graffOnStarkNetFromMainnet(bytes32 messageToGraff) 
+    function graffFromMainnetOnStarknet(bytes32 messageToGraff) 
     public 
     {
        
@@ -52,24 +50,25 @@ contract StarkNetGraffiti {
 
         // Send the message to the StarkNet core contract.
         starknetCore.sendMessageToL2(l2MessengerContractAddress, GRAFF_SELECTOR, payload);
-        emit messageSentToStarkNet(msg.sender, bytes32ToString(messageToGraff));
+        emit messageSentToStarkNet(bytes32ToString(messageToGraff));
     }
 
-    function multiGraffs(address[] memory senders, bytes32[] memory messageToGraff)
+    function multiGraffs(bytes32[] memory messageToGraff)
     external
     {
-        for (uint i = 0; i < senders.length; i++)
+        for (uint i = 0; i < messageToGraff.length; i++)
         {
-            graffFromStarknetOnMainnet(senders[i], messageToGraff[i]);
+            graffFromStarknetOnMainnet(messageToGraff[i]);
         }
     }
 
     // Setup, permissions and utility
 
-    function setL2Graffer(uint256 l2MessengerContractAddress_, uint256 GRAFF_SELECTOR_)
+    function setL2Graffer(IStarknetCore starknetCore_, uint256 l2MessengerContractAddress_, uint256 GRAFF_SELECTOR_)
     public
     onlyOwner
     {
+        starknetCore = starknetCore_;   
         l2MessengerContractAddress = l2MessengerContractAddress_;
         GRAFF_SELECTOR = GRAFF_SELECTOR_;
     }
