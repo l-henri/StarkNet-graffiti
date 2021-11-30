@@ -35,17 +35,19 @@ func constructor{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_p
 end
 
 @external
-func paint_graffiti{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(msg : felt):
-    let (payload) = alloc()
-    [payload] = msg
+func paint_graffiti{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(msg_len : felt, msg : felt*):
+    let (message_payload : felt*) = alloc()
+    assert message_payload[0] = msg_len
+    message_payload = msg
+
     let (address) = to_address.read()
-    send_message_to_l1(address, 1, payload)
+    send_message_to_l1(address, 1, message_payload)
     return ()
 end
 
 @l1_handler
 func get_painted{syscall_ptr : felt*, pedersen_ptr : HashBuiltin*, range_check_ptr}(
-        from_address : felt, msg : felt):
-    msg_received_from_mainnet.write(msg)
+        from_address : felt, msg_len : felt, msg : felt*):
+    msg_received_from_mainnet.write(msg_len)
     return ()
 end

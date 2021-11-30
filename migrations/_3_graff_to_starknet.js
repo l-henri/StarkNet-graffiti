@@ -2,13 +2,11 @@
 var StarkNetGraffiti = artifacts.require("StarkNetGraffiti.sol");
 
 var myGraff = "Hey you there"
+var ethereumGrafferAddress = "0xBe8d8396833E07A9bA71e3Df01e17E7D37d5c56b"
 
 module.exports = (deployer, network, accounts) => {
     deployer.then(async () => {
-        if (network == "goerli") 
-        {
-            StarkNetGraffitiDeployed = await StarkNetGraffiti.at("0xBe8d8396833E07A9bA71e3Df01e17E7D37d5c56b")
-        }
+            StarkNetGraffitiDeployed = await StarkNetGraffiti.at(ethereumGrafferAddress)
 
         await sendGraff(deployer, network, accounts); 
 

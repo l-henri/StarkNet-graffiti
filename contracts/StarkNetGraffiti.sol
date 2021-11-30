@@ -1,6 +1,6 @@
 pragma solidity ^0.6.12;
+pragma experimental ABIEncoderV2;
 import './IStarknetCore.sol';
-
 /**
   Demo contract for L1 <-> L2 interaction between an L2 StarkNet contract and this L1 solidity
   contract.
@@ -17,48 +17,39 @@ contract StarkNetGraffiti {
     // An owner who can modify the graff contract
     address public owner;
 
-
     event messageReceivedFromStarkNet(string stringMessage);
     event messageSentToStarkNet(string stringMessage);
-
+    event logSomething(uint256 length);
     constructor() public 
     {   
       owner = msg.sender;
     }
 
-    function graffFromStarknetOnMainnet(bytes32 messageToGraff) 
+    function graffFromStarknetOnMainnet(string memory messageToGraff) 
     public 
     {
-        // Construct the withdrawal message's payload.
-        uint256[] memory payload = new uint256[](1);
-        payload[0] = uint256(messageToGraff);
 
-        // Consume the message from the StarkNet core contract.
-        // This will revert the (Ethereum) transaction if the message does not exist.
-        starknetCore.consumeMessageFromL2(l2MessengerContractAddress, payload);
-        emit messageReceivedFromStarkNet(bytes32ToString(messageToGraff));
+
+        // // Consume the message from the StarkNet core contract.
+        // // This will revert the (Ethereum) transaction if the message does not exist.
+        starknetCore.consumeMessageFromL2(l2MessengerContractAddress, buildMessagingPayloadFromString(messageToGraff));
+        emit messageReceivedFromStarkNet(messageToGraff);
     }
 
-    function graffFromMainnetOnStarknet(bytes32 messageToGraff) 
+    function graffFromMainnetOnStarknet(string memory messageToGraff) 
     public 
     {
-       
-        // Construct the deposit message's payload.
-        uint256[] memory payload = new uint256[](2);
-        payload[0] = uint256(msg.sender);
-        payload[1] = uint256(messageToGraff);
-
         // Send the message to the StarkNet core contract.
-        starknetCore.sendMessageToL2(l2MessengerContractAddress, GRAFF_SELECTOR, payload);
-        emit messageSentToStarkNet(bytes32ToString(messageToGraff));
+        starknetCore.sendMessageToL2(l2MessengerContractAddress, GRAFF_SELECTOR, buildMessagingPayloadFromString(messageToGraff));
+        emit messageSentToStarkNet(messageToGraff);
     }
 
-    function multiGraffs(bytes32[] memory messageToGraff)
+    function multiGraffs(string[] memory messagesToGraff)
     external
     {
-        for (uint i = 0; i < messageToGraff.length; i++)
+        for (uint i = 0; i < messagesToGraff.length; i++)
         {
-            graffFromStarknetOnMainnet(messageToGraff[i]);
+            graffFromStarknetOnMainnet(messagesToGraff[i]);
         }
     }
 
@@ -73,27 +64,27 @@ contract StarkNetGraffiti {
         GRAFF_SELECTOR = GRAFF_SELECTOR_;
     }
 
+    function buildMessagingPayloadFromString(string memory myString)
+    public
+    pure
+    returns (uint256[] memory)
+    {
+        bytes memory messageAsBytes = bytes(myString);
+        // Construct the deposit message's payload.
+        uint256[] memory payload = new uint256[](messageAsBytes.length);
+        payload[0] = uint256(messageAsBytes.length);
+        for (uint8 i = 0; i < messageAsBytes.length; i++)
+        {
+            payload[i+1] = uint8(messageAsBytes[i]);
+        }
+        return payload;
+    }
+
     modifier onlyOwner() 
     {
 
         require(msg.sender == owner);
         _;
-    }
-
-    function bytes32ToString(bytes32 _bytes32) 
-    public 
-    pure 
-    returns (string memory) 
-    {
-        uint8 i = 0;
-        while(i < 32 && _bytes32[i] != 0) {
-            i++;
-        }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-        return string(bytesArray);
     }
 
 }
