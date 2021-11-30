@@ -1,0 +1,62 @@
+[
+    {
+        "inputs": [
+            {
+                "name": "address",
+                "type": "felt"
+            }
+        ],
+        "name": "update_l1_address",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [],
+        "name": "message_received",
+        "outputs": [
+            {
+                "name": "msg",
+                "type": "felt"
+            }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "l1_contract_address",
+                "type": "felt"
+            }
+        ],
+        "name": "constructor",
+        "outputs": [],
+        "type": "constructor"
+    },
+    {
+        "inputs": [
+            {
+                "name": "msg",
+                "type": "felt"
+            }
+        ],
+        "name": "paint_graffiti",
+        "outputs": [],
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "name": "from_address",
+                "type": "felt"
+            },
+            {
+                "name": "msg",
+                "type": "felt"
+            }
+        ],
+        "name": "get_painted",
+        "outputs": [],
+        "type": "l1_handler"
+    }
+]

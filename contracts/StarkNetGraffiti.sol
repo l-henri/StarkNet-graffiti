@@ -7,12 +7,12 @@ import './IStarknetCore.sol';
 */
 contract StarkNetGraffiti {
     // The StarkNet core contract.
-    IStarknetCore starknetCore;
+    IStarknetCore public starknetCore;
 
     // The selector of the "graffOnStarkNetFromMainnet" l1_handler.
-    uint256 GRAFF_SELECTOR; 
+    uint256 public GRAFF_SELECTOR; 
     // The address of the L2 graff contract
-    uint256 l2MessengerContractAddress;
+    uint256 public l2MessengerContractAddress;
 
     // An owner who can modify the graff contract
     address public owner;
