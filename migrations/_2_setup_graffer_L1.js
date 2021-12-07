@@ -1,15 +1,13 @@
 
 var StarkNetGraffiti = artifacts.require("StarkNetGraffiti.sol");
 
-var ethereumGrafferAddress = "0xBe8d8396833E07A9bA71e3Df01e17E7D37d5c56b"
-var starknetGrafferAddressAsInt = "3603122710348362136025089613373987800701254881949433260388166359342774503872"
+var ethereumGrafferAddress = "0x647dD2a964C10dF6588a4ac6F5Cf2C44B16E3e64"
+var starknetGrafferAddressAsInt = "3319278968080370309910878968659006603895909569061385119632795853997864250857"
+starknetCore_ = "0xde29d060d45901fb19ed6c6e959eb22d8626708e"
 
 module.exports = (deployer, network, accounts) => {
     deployer.then(async () => {
-        if (network == "goerli") 
-        {
-            starknetCore_ = "0xde29d060d45901fb19ed6c6e959eb22d8626708e"
-        }
+
         await setGraffer(deployer, network, accounts); 
     });
 };

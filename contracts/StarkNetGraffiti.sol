@@ -16,22 +16,15 @@ contract StarkNetGraffiti {
 
     // An owner who can modify the graff contract
     address public owner;
-    uint256 public something;
 
     event messageReceivedFromStarkNet(string stringMessage);
     event messageSentToStarkNet(string stringMessage);
-    event logSomething(uint256 length);
+
     constructor() public 
     {   
       owner = msg.sender;
     }
 
-    function testSomething(bytes32 messageToGraff)
-    public
-    {
-        bytes32 whatIWant = 0x00000000000000000000000000000048656c6c6f20746573746e6574203b2d29;
-        require(messageToGraff == whatIWant);
-    }
 
     function graffFromStarknetOnMainnet(bytes32 messageToGraff) 
     public 
@@ -43,7 +36,7 @@ contract StarkNetGraffiti {
         // Consume the message from the StarkNet core contract.
         // This will revert the (Ethereum) transaction if the message does not exist.
         starknetCore.consumeMessageFromL2(l2MessengerContractAddress, payload);
-        emit messageReceivedFromStarkNet(bytes32ToString(messageToGraff));
+        emit messageReceivedFromStarkNet(customizedBytes32ToString(messageToGraff));
     }
 
     function graffFromMainnetOnStarknet(bytes32 messageToGraff) 
@@ -51,13 +44,12 @@ contract StarkNetGraffiti {
     {
        
         // Construct the deposit message's payload.
-        uint256[] memory payload = new uint256[](2);
-        payload[0] = uint256(msg.sender);
-        payload[1] = uint256(messageToGraff);
+        uint256[] memory payload = new uint256[](1);
+        payload[0] = uint256(messageToGraff);
 
         // Send the message to the StarkNet core contract.
         starknetCore.sendMessageToL2(l2MessengerContractAddress, GRAFF_SELECTOR, payload);
-        emit messageSentToStarkNet(bytes32ToString(messageToGraff));
+        emit messageSentToStarkNet(customizedBytes32ToString(messageToGraff));
     }
 
     function multiGraffs(bytes32[] memory messageToGraff)
@@ -87,7 +79,7 @@ contract StarkNetGraffiti {
         _;
     }
 
-    function bytes32ToString(bytes32 _bytes32) 
+    function customizedBytes32ToString(bytes32 _bytes32) 
     public 
     pure 
     returns (string memory) 
@@ -96,11 +88,15 @@ contract StarkNetGraffiti {
         while(i < 32 && _bytes32[i] != 0) {
             i++;
         }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
+        uint offset = i;
+        bytes memory bytesArray = new bytes(32-offset);
+        for (i = 0; i < 32-offset; i++) {
+            bytesArray[i] = _bytes32[i+offset];
         }
         return string(bytesArray);
     }
+    
+
+
 
 }

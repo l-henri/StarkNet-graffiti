@@ -27,28 +27,32 @@ To install it locally in the repo. Then [configure it](https://www.trufflesuite.
 ### Setting up Cairo
 Go [here](https://www.cairo-lang.org/docs/quickstart.html) for installation instructions.
 
-### Graffing on Testnet
+### Graffing on Mainnet
 So you want to deface Testnet huh? Simple.
 - Make sure you [set up](###-Setting-up-Cairo) properly
+- Compile the program with `starknet-compile contracts/graffiti.cairo \
+    --abi contracts/graffiti-abi.json \
+    --output contracts/graffiti-compiled.json `
 - Use [this website](https://onlineasciitools.com/convert-ascii-to-decimal) to encode your message in decimal. Make sure to disable "decimal spacing" so you get a value like "123456" rather than "12 34 56"
-- Select the mainnet Alpha network `export STARKNET_NETWORK=alpha`
+- Select the mainnet Alpha network `export STARKNET_NETWORK=alpha-mainnet`
 - Send this command `starknet invoke \
-    --address 0x07f74b9130660647d70c9f76394eb64f90c60cf11acb23f17e7e8dc8423449c0 \
+    --address 0x00813b30be862c2267ccf6dc2719297cb0cb8c782cb57091992d831aab4083d1 \
     --abi contracts/graffiti-abi.json \
     --function paint_graffiti \
     --inputs <your message encode in decimal>`
-- Congrats! Your message is en route to testnet.
-- You can look up your transaction on [Voyager](https://voyager.online/). It may take a few minutes.
-- You can see your message in the [Messaging section](https://goerli.voyager.online/contract/0x07f74b9130660647d70c9f76394eb64f90c60cf11acb23f17e7e8dc8423449c0#messages) of the explorer
+- Congrats! Your message is en route to mainnet.
+- You can look up your transaction on [Voyager](https://voyager.online/). It may take a few hours before it is included in a block. Don't worry, it will show up there
+- You can see your message in the [Messaging section](https://voyager.online/contract/0x00813b30be862c2267ccf6dc2719297cb0cb8c782cb57091992d831aab4083d1#messages) of the explorer
 
-So now you wait for a few hours, for the state update to be published to the testnet. 
+So now you wait for a few hours, for the state update to be published to mainnet.
+ 
 
 ### Graffing from Testnet
 Curious about going the opposite route?
 
 
 ## Deployments
-- Goerli graffer 0xBe8d8396833E07A9bA71e3Df01e17E7D37d5c56b
+- Mainnet graffer [here](https://etherscan.io/address/0xc010818276eb5dff6cc462217c66ee7648fb8d8b)
 
 ## Contributing
 This project was done in a few hours, and can be made better; your contributions are welcome! Here are things that you can do to help:
